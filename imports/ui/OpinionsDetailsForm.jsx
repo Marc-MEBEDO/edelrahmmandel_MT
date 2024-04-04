@@ -94,7 +94,7 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
                     document.body.appendChild( elemx );
                     elemx.click();
                     document.body.removeChild( elemx );
-                    //setPendingCSVExport( false );
+                    // setPendingCSVExport( false );
                 }
             });
             setPendingCSVExport( false );
