@@ -1,8 +1,8 @@
 import { ServiceMaintenances } from '/imports/api/collections/serviceMaintenances';
 
-// MT 21.03.2024
+// MT 04.04.2024
 // Diese Funktion wurde im Produktvsystem einmal ausgeführt und wird deshalb nicht mehr benötigt.
-//return;
+return;
 
 console.log( 'start insert initial ServiceMaintenances dataset' );
 ServiceMaintenances.remove({});
