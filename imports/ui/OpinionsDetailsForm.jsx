@@ -89,14 +89,15 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
                 if ( res != '' ) {
                     let elemx = document.createElement('a');
                     elemx.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent( res );
-                    elemx.download = 'OPL.csv';
+                    elemx.download = 'OPL_' + String( refOpinion ) + '.csv';
                     elemx.style.display = 'none';
                     document.body.appendChild( elemx );
                     elemx.click();
                     document.body.removeChild( elemx );
-                    setPendingCSVExport( false );
+                    //setPendingCSVExport( false );
                 }
-            });            
+            });
+            setPendingCSVExport( false );
         }
     }
 
