@@ -754,23 +754,42 @@ Meteor.methods({
             let csvData = [];
             //console.log( sortedDetailsTodolist );
             sortedDetailsTodolist.forEach( ( item , index ) => {
+                // Fragen können Leerzeichen enthalten, daher diese entfernen, falls vorhanden.
+                let frage = item.printTitle;
+                frage = frage.replace( /\n/g , '' );
+                // Semikolon entfernen, da dies das CSV Trennzeichen ist.
+                frage = frage.replace( /;/g , '' );
+                // Maßnahmen können HTML Tags enthalten, daher diese entfernen, falls vorhanden.
+                let actionText = item.actionText;
+                actionText = actionText.replace( /<p>/g , '' );
+                actionText = actionText.replace( /<\/p>/g , '' );
+                // => Zunächst nur dieZeilenumbrüche, Formatierungen etc. sollen sichtbar bleiben.
+                /*actionText = actionText.replace( /<b>/g , '' );
+                actionText = actionText.replace( /<\/b>/g , '' );
+                actionText = actionText.replace( /<u>/g , '' );
+                actionText = actionText.replace( /<\/u>/g , '' );
+                actionText = actionText.replace( /<i>/g , '' );
+                actionText = actionText.replace( /<\/i>/g , '' );*/
+                // Semikolon entfernen, da dies das CSV Trennzeichen ist.
+                actionText = actionText.replace( /;/g , '' );
                 const dataSet = {
                     nummer: index+1,
-                    massnahme: item.actionText,
-                    frage: item.printTitle,
+                    massnahme: actionText,
+                    frage: frage,
                     handlungsbedarf: actionCodes[ item.actionCode ].text
                 }
                 csvData.push( dataSet );
             });
-            //console.log( csvData );
+            console.log( csvData );
             // Convert the object list to an array list using Sifter
             const arrList = Sifter.toArrayList( columns , csvData );
-
+            console.log( arrList );
             // Print the array list as a CSV string using Printer
             //Printer.printAsCSV( arrList );
 
             // Create a PSV table string from the array list using Renderer
             psvOutput = Renderer.toDelimitedTable( arrList , ';' );
+            console.log( psvOutput );
         }
         return psvOutput;
     },
