@@ -22,6 +22,8 @@ import fs_extra from 'fs-extra';
 
 import moment from 'moment';
 
+import { Sifter, Renderer } from 'tabulatore';
+
 //import pdfence from 'pdfence';
 
 const readFile = Meteor.wrapAsync(fs.readFile, fs);
@@ -665,6 +667,115 @@ Meteor.methods({
     },
 
     /**
+     * Creates a CSV Export of the ToDo list for the given Opinion
+     * 
+     * @param {String} refOpinion Specifies the ID of the opinion
+     */
+    async 'opinion.ToDoCSVExport'( refOpinion ) {
+        check(refOpinion, String);
+
+        if (!this.userId) {
+            throw new Meteor.Error('Not authorized.');
+        }
+        const currentUser = await Meteor.users.findOneAsync(this.userId);
+
+        // ... and check then if the current-user is member of sharedWith
+        const opinion = await Opinions.findOneAsync({
+            _id: refOpinion,
+            'sharedWith.user.userId': this.userId
+        });
+
+        if (!opinion) {
+            throw new Meteor.Error('Das angegebene Gutachten wurde nicht mit Ihnen geteilt. Sie können daher keinen CSV Export erzeugen.');
+        }
+
+        const sharedWithRole = opinion.sharedWith.find( s => s.user.userId == this.userId );
+        
+        if (!hasPermission({ currentUser, sharedRole: sharedWithRole.role }, 'opinion.edit')) {
+            throw new Meteor.Error('Keine Berechtigung zum Bearbeiten (CSV Export) des angegebenen Gutachtens.');
+        }
+        let psvOutput = '';
+        let detailsTodolist = await OpinionDetails.find({
+            refOpinion,
+            type: 'QUESTION',
+            deleted: false,
+            finallyRemoved: false,
+            actionCode: { $ne: 'okay' },
+            actionText: { $ne: null }
+        }, {
+            fields: {
+                _id: 1,
+                printTitle: 1,
+                actionCode: 1,
+                actionText: 1,
+                actionPrio: 1,
+                parentPosition: 1,
+                position: 1
+            },
+            sort: {
+                actionPrio: 1,
+                parentPosition: 1,
+                position: 1
+            }
+        }).fetchAsync();
+
+        // Sortierung der detailsTodolist numerisch.
+        /* Das (Sortierung des Arrays) ist notwendig, weil leider Funktionalität Mongo collation nicht enthalten ist unter Meteor.
+        Mit collation wäre nur folgendes notwendig in find():        
+        collation: {
+                locale: 'de',
+                numericOrdering: true
+            }
+        https://forums.meteor.com/t/is-there-a-way-to-use-mongodb-3-4-collation/33024/13
+        */
+        let sortedDetailsTodolist = [];
+        Object.keys( actionCodes ).forEach( code => {
+            let filteredItems = detailsTodolist.filter( item => item.actionCode === code );
+            filteredItems = filteredItems.sort( (a , b) => {
+                if ( !a
+                  || !a.parentPosition
+                  || !a.position )
+                    return -1;
+                else if ( !b
+                       || !b.parentPosition
+                       || !b.position )
+                    return 1;
+                return (a.parentPosition.toString() + a.position.toString()).localeCompare( (b.parentPosition.toString() + b.position.toString()) , undefined , { numeric: true } );
+            });
+
+            filteredItems.forEach( item => {
+                sortedDetailsTodolist.push( item );
+            });
+        });
+
+        //console.log( sortedDetailsTodolist.length );
+        if ( sortedDetailsTodolist.length > 0 ) {
+            const columns = { nummer: 'Lfd.Nr.', frage: 'Frage', massnahme: 'Maßnahme', handlungsbedarf: 'Handlungsbedarf' };
+            let csvData = [];
+            //console.log( sortedDetailsTodolist );
+            sortedDetailsTodolist.forEach( ( item , index ) => {
+                const dataSet = {
+                    nummer: index+1,
+                    massnahme: item.actionText,
+                    frage: item.printTitle,
+                    handlungsbedarf: actionCodes[ item.actionCode ].text
+                }
+                csvData.push( dataSet );
+            });
+            //console.log( csvData );
+            // Convert the object list to an array list using Sifter
+            const arrList = Sifter.toArrayList( columns , csvData );
+
+            // Print the array list as a CSV string using Printer
+            //Printer.printAsCSV( arrList );
+
+            // Create a PSV table string from the array list using Renderer
+            psvOutput = Renderer.toDelimitedTable( arrList , ';' );
+        }
+        return psvOutput;
+    },
+
+    /**
      * Creates a new PDF for the given Opinion and store the
      * file in the files collection to get a secure download
      * 
@@ -689,7 +800,7 @@ Meteor.methods({
         });
 
         if (!opinion) {
-            throw new Meteor.Error('Das angegebene Gutachten wurde nicht mit Ihnen geteilt und Sie können daher kein PDF erzeugen.');
+            throw new Meteor.Error('Das angegebene Gutachten wurde nicht mit Ihnen geteilt. Sie können daher kein PDF erzeugen.');
         }
 
         const sharedWithRole = opinion.sharedWith.find( s => s.user.userId == this.userId );

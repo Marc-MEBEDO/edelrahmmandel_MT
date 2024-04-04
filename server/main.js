@@ -81,17 +81,17 @@ const sendUnreadMessages = () => {
             let subject;
             switch (msg.type) {
                 case 'MENTIONED':
-                    subject = `${senderFirstName} ${senderLastName} hat Sie erwähnt`;
+                    subject = `GutachtenPlus - ${senderFirstName} ${senderLastName} hat Sie erwähnt`;
                     break;
                 case 'SHAREDWITH':
-                    subject = `${senderFirstName} ${senderLastName} hat ein Gutachten mit Ihnen geteilt`;
+                    subject = `GutachtenPlus - ${senderFirstName} ${senderLastName} hat ein Gutachten mit Ihnen geteilt`;
                     break;
                 case 'REPLYTO':
-                    subject = `${senderFirstName} ${senderLastName} hat Ihnen geantwortet`;
+                    subject = `GutachtenPlus - ${senderFirstName} ${senderLastName} hat Ihnen geantwortet`;
                     break;
 
                 default:
-                    subject = 'Eine neue Nachricht für Sie'
+                    subject = 'GutachtenPlus - Eine neue Nachricht für Sie'
             }
 
             try {
@@ -106,7 +106,7 @@ const sendUnreadMessages = () => {
                     html: `
                         Hallo ${firstName} ${lastName},
                         <p>
-                            nachfolgende Nachricht haben Sie innerhalb der MEBEDO GutachtenPlus-App erhalten:
+                            nachfolgende Nachricht haben Sie innerhalb von <a href="https://gutachten.mebedo-ac.de">MEBEDO GutachtenPlus</a> erhalten:
                         </p>
                         <p>
                             <strong>${msg.message}</strong>

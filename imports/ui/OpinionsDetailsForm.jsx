@@ -17,6 +17,7 @@ const { Content } = Layout;
 //import ShareAltOutlined from '@ant-design/icons/ShareAltOutlined';
 import FilePdfOutlined from '@ant-design/icons/FilePdfOutlined';
 import CloseOutlined from '@ant-design/icons/CloseOutlined';
+import ExportOutlined from '@ant-design/icons/ExportOutlined';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 
 import { layouttypesObject } from '../api/constData/layouttypes';
@@ -56,6 +57,7 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
     const [ canShareWithExplicitRole, setCanShareWithExplicitRole ] = useState(false);
 
     const [ pendingPdfCreation, setPendingPdfCreation] = useState(false);
+    const [ pendingCSVExport, setPendingCSVExport] = useState(false);
     const [ activeTabPane, setActiveTabPane ] = useState("DOCUMENT");
 
     const [ visiblePdfPreview, setVisblePdfPreview ] = useState(false);
@@ -77,7 +79,26 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
         setVisblePdfPreview(true);
     }
 
+    const createToDoCSVExport = () => {
+        return () => {
+            setPendingCSVExport( true );
+            Meteor.call( 'opinion.ToDoCSVExport' , refOpinion , ( err , res ) => {
+                if ( err )
+                    console.log( err );
 
+                if ( res != '' ) {
+                    let elemx = document.createElement('a');
+                    elemx.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent( res );
+                    elemx.download = 'OPL.csv';
+                    elemx.style.display = 'none';
+                    document.body.appendChild( elemx );
+                    elemx.click();
+                    document.body.removeChild( elemx );
+                    setPendingCSVExport( false );
+                }
+            });            
+        }
+    }
 
     const createPDF = ( previewOnly , iProtected = false ) => {
         return () => {
@@ -191,13 +212,28 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
                     pageHeaderButtons.push(
                         <Button key="pdfPreview" type="dashed" onClick={createPDF(true)} loading={pendingPdfCreation}>
                             <FilePdfOutlined /> Vorschau
+                            <Tooltip title="Erstellt eine temporäre PDF Vorschau, die NICHT dauerhaft gespeichert wird"> 
+                                <InfoCircleOutlined />
+                            </Tooltip>
                         </Button>
                     );
                     pageHeaderButtons.push(
                         <Button key="pdf" type="dashed" onClick={createPDF(false)} loading={pendingPdfCreation}>
                             <FilePdfOutlined /> PDF erstellen
+                            <Tooltip title="Erstellt eine PDF Datei, die dauerhaft gespeichert wird"> 
+                                <InfoCircleOutlined />
+                            </Tooltip>
                         </Button>
                     );
+                    pageHeaderButtons.push(
+                        <Button key="ExportToDo" type="dashed" onClick={createToDoCSVExport()} loading={pendingCSVExport}>
+                            <ExportOutlined /> Maßnahmen Export
+                            <Tooltip title="Erstellt einen CSV-Export der 'Zeitlichen Konkretisierung'/OPL"> 
+                                <InfoCircleOutlined />
+                            </Tooltip>
+                        </Button>
+                    );
+
                     /*pageHeaderButtons.push(
                         <Button key="pdfProtected" type="dashed" onClick={createPDF(false,true)} loading={pendingPdfCreation}>
                             <FilePdfOutlined /> Geschütztes PDF erstellen
