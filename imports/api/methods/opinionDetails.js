@@ -260,7 +260,7 @@ Meteor.methods({
         OpinionDetails.update( { _id: opinionDetail.refParentDetail }, {
             $set: {
                 actionCode: opinionDetail.actionCode,
-                actionText: opinionDetail.actionText,
+                //actionText: opinionDetail.actionText,
                 actionPrio: opinionDetail.actionPrio
             }
         });

@@ -1,11 +1,13 @@
 {
     "version": "2.3.2",
-    "timestamp": "2024-04-04",
+    "timestamp": "2024-04-05",
     
     "details": [
         { 
             "version": "2.3.2", 
             "description": [
+                "Mit dem Auswählen/Bestätigen einer Antwort wird die Handlungsempfehlung aus der Antwort nicht mehr mit übernommen in die der Frage.",
+                "Die floating-actions haben jetzt einen Tooltip",
                 "E-Mail Text für Benachrichtigungen angepasst, u. a. den GutachtenPlus Link eingefügt.",
                 "Es ist jetzt ein CSV Export der Maßnahmen möglich."
             ]
