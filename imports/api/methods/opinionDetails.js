@@ -667,15 +667,22 @@ Meteor.methods({
         //const title = old.title == 'X' ? old.printTitle : old.title;
         let title;
         if ( !old.printTitle ) {
-            if ( old.text.length > 20 )
-                title = old.text.slice( 0 , 19 ) + '...';
-            else
-                title = old.text;
+            if ( old.text ) {
+                if ( old.text.length > 20 )
+                    title = old.text.slice( 0 , 19 ) + '...';
+                else
+                    title = old.text;
+            }
+            else if ( old.title )
+                title = old.title;
         }
         else if ( old.printTitle.length > 20 )
             title = old.printTitle.slice( 0 , 19 ) + '...';
         else
             title = old.printTitle;
+    
+        if ( title == 'P' )
+            title = 'Seitenumbruch';
         let activity = injectUserData({ currentUser }, {
             refOpinion: old.refOpinion,
             // dieser Eintrag wird beim Parent angesiedelt
@@ -774,15 +781,22 @@ Meteor.methods({
             //const title = old.title == 'X' ? old.printTitle : old.title;
             let title;
             if ( !old.printTitle ) {
-                if ( old.text.length > 20 )
-                    title = old.text.slice( 0 , 19 ) + '...';
-                else
-                    title = old.text;
+                if ( old.text ) {
+                    if ( old.text.length > 20 )
+                        title = old.text.slice( 0 , 19 ) + '...';
+                    else
+                        title = old.text;
+                }
+                else if ( old.title )
+                    title = old.title;
             }
             else if ( old.printTitle.length > 20 )
                 title = old.printTitle.slice( 0 , 19 ) + '...';
             else
                 title = old.printTitle;
+            
+            if ( title == 'P' )
+                title = 'Seitenumbruch';
             let activity = injectUserData({ currentUser }, {
                 refOpinion: old.refOpinion,
                 // dieser Eintrag wird beim Parent angesiedelt
