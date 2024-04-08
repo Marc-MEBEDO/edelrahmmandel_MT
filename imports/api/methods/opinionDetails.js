@@ -668,21 +668,22 @@ Meteor.methods({
         let title;
         if ( !old.printTitle ) {
             if ( old.text ) {
-                if ( old.text.length > 20 )
-                    title = old.text.slice( 0 , 19 ) + '...';
-                else
-                    title = old.text;
+                title = old.text;             
+                title = title.replace( /(<([^>]+)>)/ig , '' )
             }
             else if ( old.title )
                 title = old.title;
         }
-        else if ( old.printTitle.length > 20 )
-            title = old.printTitle.slice( 0 , 19 ) + '...';
         else
             title = old.printTitle;
     
-        if ( title == 'P' )
+        if ( title.length > 20 )
+            title = title.slice( 0 , 19 ) + '...';
+        else if ( title == 'P' )
             title = 'Seitenumbruch';
+        else if ( title == null || title == '' )
+            title = '[Baustein ohne Text]';
+        
         let activity = injectUserData({ currentUser }, {
             refOpinion: old.refOpinion,
             // dieser Eintrag wird beim Parent angesiedelt
@@ -691,7 +692,7 @@ Meteor.methods({
             refDetailFinallyRemoved: id._str || id,
             type: 'SYSTEM-LOG',
             action: 'FINALLYREMOVE',
-            message: `hat den Baustein mit dem Titel/Text <strong>${title}</strong> gelöscht.`,
+            message: `hat den Baustein gelöscht mit dem Titel/Text: <strong>${title}</strong>`,
             changes: [{
                 message: "Der Baustein wurde gelöscht.",
                 propName: "finallyRemoved",
@@ -782,21 +783,22 @@ Meteor.methods({
             let title;
             if ( !old.printTitle ) {
                 if ( old.text ) {
-                    if ( old.text.length > 20 )
-                        title = old.text.slice( 0 , 19 ) + '...';
-                    else
-                        title = old.text;
+                    title = old.text;             
+                    title = title.replace( /(<([^>]+)>)/ig , '' )
                 }
                 else if ( old.title )
                     title = old.title;
             }
-            else if ( old.printTitle.length > 20 )
-                title = old.printTitle.slice( 0 , 19 ) + '...';
             else
                 title = old.printTitle;
-            
-            if ( title == 'P' )
+        
+            if ( title.length > 20 )
+                title = title.slice( 0 , 19 ) + '...';
+            else if ( title == 'P' )
                 title = 'Seitenumbruch';
+            else if ( title == null || title == '' )
+                title = '[Baustein ohne Text]';
+
             let activity = injectUserData({ currentUser }, {
                 refOpinion: old.refOpinion,
                 // dieser Eintrag wird beim Parent angesiedelt
@@ -805,7 +807,7 @@ Meteor.methods({
                 //refDetailFinallyRemoved: id._str || id,
                 type: 'SYSTEM-LOG',
                 action: 'UNDOFINALLYREMOVE',
-                message: `hat den Baustein mit dem Titel/Text <strong>${title}</strong> wiederhergestellt.`,
+                message: `hat den Baustein wiederhergestellt mit dem Titel/Text: <strong>${title}</strong>`,
                 changes: [{
                     message: "Der Baustein wurde wiederhergestellt.",
                     propName: "finallyRemoved",
