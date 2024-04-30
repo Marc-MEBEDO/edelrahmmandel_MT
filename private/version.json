@@ -1,8 +1,14 @@
 {
-    "version": "2.3.2",
-    "timestamp": "2024-04-05",
+    "version": "2.3.3",
+    "timestamp": "2024-04-30",
     
     "details": [
+        { 
+            "version": "2.3.3", 
+            "description": [
+                "Mit dem Auswählen/Bestätigen einer Antwort wird die Handlungsempfehlung aus der Antwort jetzt wieder mit übernommen in die der Frage. Die Änderungen aus Version 2.3.2 dazu wurden also rückgängig gemacht."
+            ]
+        },
         { 
             "version": "2.3.2", 
             "description": [
