@@ -16,17 +16,28 @@ import { MediaQuery, useMediaQueries } from '../client/mediaQueries';
 
 import Input from 'antd/lib/input';
 
+import Switch from 'antd/lib/switch';
+
 const lower = a => {
     if (!a) return '';
 
     return a.toLowerCase();
 }
 
-export const ListOpinions = () => {
-    const [ opinions , isLoading ] = useOpinions();
+export const ListOpinions = ({currentUser}) => {
+    const [ allOpinionsForControl , setAllOpinionsForControl ] = useState( false );
+    const [ opinions , isLoading ] = useOpinions( allOpinionsForControl );
     const [ filteredOpinions , setFilteredOpinions ] = useState( opinions );
 
     const { isDesktop } = useMediaQueries();
+
+    // Spezialrolle für Gutachten Kontrolle beachten, falls bei User vorhanden.
+    let hasRoleOPINION_CONTROL = false;
+    if ( currentUser )
+    {
+        if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+            hasRoleOPINION_CONTROL = true;
+    }
 
     // Filter zurücksetzen über useEffect:
     // - Wenn isLoading sich ändert, also nachdem alle Gutachten geladen sind. Ansonsten wäre beim ersten Öffnen bzw. neu Laden die Liste leer.
@@ -154,14 +165,29 @@ export const ListOpinions = () => {
                 }));
         }
     };
+
+    // Umschalten auf alle Gutachten für Spezialrolle für Gutachten Kontrolle.
+    const onUseSwitch = ( checked ) => {
+        setAllOpinionsForControl( checked );
+    };
       
     return (
         <Fragment>
-            <Input
-                placeholder="Hier tippen, um die Gutachtenliste nach Titel zu filtern"
-                allowClear
-                onChange={onChangeText}
-            />
+            <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+                {
+                    !hasRoleOPINION_CONTROL ? null :
+                    <Space.Compact block>
+                        <Space direction="horizontal">
+                            <Switch onChange={onUseSwitch} /> Gutachtenkontrolle (alle Gutachten anzeigen)
+                        </Space>
+                    </Space.Compact>
+                }
+                <Input
+                    placeholder="Hier tippen, um die Gutachtenliste nach Titel zu filtern"
+                    allowClear
+                    onChange={onChangeText}
+                />
+            </Space>
             <MediaQuery showAtPhone={true}>
                 <List
                     itemLayout="horizontal"

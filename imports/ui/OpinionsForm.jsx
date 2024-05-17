@@ -41,7 +41,7 @@ export const OpinionsForm = ({currentUser}) => {
                     </div>
                 </Affix>
 
-                <ListOpinions />
+                <ListOpinions currentUser={currentUser}/>
             </Content>
         </Layout>
     );

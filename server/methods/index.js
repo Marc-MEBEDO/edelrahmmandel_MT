@@ -3,3 +3,4 @@ import './images';
 import './info';
 import './opinions';
 import './users';
+import './ki';

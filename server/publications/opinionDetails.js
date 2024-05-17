@@ -5,10 +5,18 @@ import { Opinions } from '/imports/api/collections/opinions';
 import { OpinionDetails } from '/imports/api/collections/opinionDetails';
 
 Meteor.publish('opinionDetail', function publishOpinionDetail({ refOpinion, refDetail }) {
-    let permitted = Opinions.findOne({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = Meteor.users.findOne( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted = Opinions.findOne({
+            _id: refOpinion
+        });
+    else
+        permitted = Opinions.findOne({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
 
@@ -17,21 +25,36 @@ Meteor.publish('opinionDetail', function publishOpinionDetail({ refOpinion, refD
 
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailAsync', async function publishOpinionDetailAsync({ refOpinion, refDetail }) {
-    let permitted = await Opinions.findOneAsync({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
-
+    const currentUser = await Meteor.users.findOneAsync( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion
+        });
+    else
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
     if (!permitted) return null;
 
     return OpinionDetails.find({ _id: refDetail, finallyRemoved: false });
 });
 
 Meteor.publish('opinionDetails', function publishOpinionDetails({ refOpinion, refParentDetail }) {
-    let permitted = Opinions.findOne({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = Meteor.users.findOne( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted =  Opinions.findOne({
+            _id: refOpinion
+        });
+    else
+        permitted = Opinions.findOne({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
 
@@ -43,10 +66,18 @@ Meteor.publish('opinionDetails', function publishOpinionDetails({ refOpinion, re
 
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailsAsync', async function publishOpinionDetailsAsync({ refOpinion, refParentDetail }) {
-    let permitted = await Opinions.findOneAsync({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = await Meteor.users.findOneAsync( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion
+        });
+    else
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
     if (refParentDetail)
@@ -56,10 +87,18 @@ Meteor.publish('opinionDetailsAsync', async function publishOpinionDetailsAsync(
 });
 
 Meteor.publish('opinionDetailsSpellcheck', function publishOpinionDetailsSpellcheck({ refOpinion }) {
-    let permitted = Opinions.findOne({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = Meteor.users.findOne( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted =  Opinions.findOne({
+            _id: refOpinion
+        });
+    else
+        permitted = Opinions.findOne({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
 
@@ -81,10 +120,18 @@ Meteor.publish('opinionDetailsSpellcheck', function publishOpinionDetailsSpellch
 
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailsSpellcheckAsync', async function publishOpinionDetailsSpellcheckAsync({ refOpinion }) {
-    let permitted = await Opinions.findOneAsync({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = await Meteor.users.findOneAsync( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion
+        });
+    else
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
 
@@ -105,10 +152,18 @@ Meteor.publish('opinionDetailsSpellcheckAsync', async function publishOpinionDet
 });
 
 Meteor.publish('opinionDetailsActionListitems', function publishOpinionDetailsActionListitems(refOpinion) {
-    let permitted = Opinions.findOne({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = Meteor.users.findOne( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted =  Opinions.findOne({
+            _id: refOpinion
+        });
+    else
+        permitted = Opinions.findOne({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
     return OpinionDetails.find({ 
@@ -123,10 +178,18 @@ Meteor.publish('opinionDetailsActionListitems', function publishOpinionDetailsAc
 
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailsActionListitemsAsync', async function publishOpinionDetailsActionListitemsAsync(refOpinion) {
-    let permitted = await Opinions.findOneAsync({
-        _id: refOpinion,
-        "sharedWith.user.userId": this.userId
-    });
+    const currentUser = await Meteor.users.findOneAsync( this.userId );
+    let permitted;
+    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion
+        });
+    else
+        permitted = await Opinions.findOneAsync({
+            _id: refOpinion,
+            "sharedWith.user.userId": this.userId
+        });
 
     if (!permitted) return null;
     return OpinionDetails.find({ 

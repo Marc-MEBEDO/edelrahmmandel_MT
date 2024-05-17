@@ -1,8 +1,16 @@
 {
-    "version": "2.3.3",
-    "timestamp": "2024-04-30",
+    "version": "2.4.0",
+    "timestamp": "2024-05-15",
     
     "details": [
+        { 
+            "version": "2.4.0", 
+            "description": [
+                "KI Einbindung in floating-actions, um zu einem Detail die KI befragen zu können - (noch) deaktiviert.",
+                "Die Rolle OPINION_CONTROL vorgesehen, um ALLE Gutachten einsehen zu können zur Gutachten Kontrolle.",
+                "Update Opinion-Documenter auf 1.0.53 - Es erfolgt innerhalb von Fragen kein Umbruch mehr."
+            ]
+        },
         { 
             "version": "2.3.3", 
             "description": [

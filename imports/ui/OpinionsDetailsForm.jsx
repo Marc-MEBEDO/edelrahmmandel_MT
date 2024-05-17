@@ -46,8 +46,8 @@ import { useAppState } from '../client/AppState';
 
 
 export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
-    const { hasAdminRole } = useAccount();
-    const [opinion, opinionIsLoading] = useOpinion(refOpinion);
+    const { hasAdminRole , hasRoleOPINION_CONTROL } = useAccount();
+    const [opinion, opinionIsLoading] = useOpinion(refOpinion , hasRoleOPINION_CONTROL );
     const [detail, detailIsLoading] = useOpinionDetail(refOpinion, refDetail);
 
     const [ canEdit, setCanEdit ] = useState(false);
@@ -166,12 +166,21 @@ export const OpinionsDetailsForm = ({refOpinion, refDetail, currentUser}) => {
         if (sharedWithUser && sharedWithUser.role) {
             perm.sharedRole = sharedWithUser.role;
         }
-        
-        let edit = hasPermission(perm, 'opinion.edit'),
-            del = hasPermission(perm, 'opinion.remove'),
-            share = hasPermission(perm, 'shareWith'),
-            cancelShare = hasPermission(perm, 'cancelSharedWith'),
+        let edit = false,
+            del = false,
+            share = false,
+            cancelShare = false,
+            shareWithExplicitRole = false;
+        if ( !sharedWithUser && currentUser.userData.roles.includes( 'OPINION_CONTROL' ) ){
+            // Spezialrolle für Gutachten Kontrolle beachten und wenn vorhanden und nicht "geteilt mit", alle Berechtigungen auf false lassen.
+        }
+        else {        
+            edit = hasPermission(perm, 'opinion.edit');
+            del = hasPermission(perm, 'opinion.remove');
+            share = hasPermission(perm, 'shareWith');
+            cancelShare = hasPermission(perm, 'cancelSharedWith');
             shareWithExplicitRole = hasPermission(perm, 'shareWithExplicitRole');
+        }
 
         if (edit != canEdit) setCanEdit(edit);
         if (del != canDelete) setCanDelete(del);

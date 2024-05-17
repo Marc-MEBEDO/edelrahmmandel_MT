@@ -234,7 +234,7 @@ export const OpinionContent = ({refOpinion, currentUser, canEdit=false, canDelet
         });
     }
 
-    console.log('PreviewUrl update:', previewUrl);
+    //console.log('PreviewUrl update:', previewUrl);
 
     function onItemClick({ pageNumber: itemPageNumber }) {
         setPageNumber(itemPageNumber);

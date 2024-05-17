@@ -15,7 +15,7 @@ import { DiffDrawer } from './components/Differ';
 import { ReplyTo } from './components/ReplyTo';
 import { MentionsWithEmojis } from './components/MentionsWithEmojis';
 
-import { useOpinion, useActivities } from '../client/trackers';
+import { useOpinion , useActivities } from '../client/trackers';
 import { hasPermission } from '../api/helpers/roles';
 
 import { FlowRouter } from 'meteor/kadira:flow-router';
@@ -23,7 +23,7 @@ import { Expert } from './components/Expert';
 
 export const ListActivities = ( { refOpinion, refDetail, currentUser, onClose } ) => {
     const [ opinion, opinionIsLoading ] = useOpinion(refOpinion);
-    const [ activities, activitiesLoading ] = useActivities(refOpinion, FlowRouter.getQueryParam('activitiesBy') || refDetail);
+    const [ activities, activitiesLoading ] = useActivities(refOpinion, FlowRouter.getQueryParam('activitiesBy') || refDetail , currentUser );
     const [form] = Form.useForm();
     const activitiesEndRef = useRef(null);
 
@@ -59,16 +59,19 @@ export const ListActivities = ( { refOpinion, refDetail, currentUser, onClose } 
 
     if (currentUser && !opinionIsLoading && opinion) {
         let post = false,
-            perm = { currentUser };
+        perm = { currentUser };
 
         const sharedWithUser = opinion.sharedWith.find( shared => shared.user.userId === currentUser._id );
-        
         if (sharedWithUser && sharedWithUser.role) {
             perm.sharedRole = sharedWithUser.role;
         }
         
-        post = hasPermission(perm, 'opinion.canPostMessage');
-        
+        if ( sharedWithUser )
+            post = hasPermission(perm, 'opinion.canPostMessage');
+        else if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+            // Spezialrolle für Gutachten Kontrolle beachten.
+            post = false;
+            
         if (post != canPostMessage) setCanPostMessage(post);
     }
 

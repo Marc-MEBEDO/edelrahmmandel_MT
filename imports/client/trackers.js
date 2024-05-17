@@ -32,12 +32,18 @@ export const useAccount = () => useTracker(() => {
         currentUser = Meteor.users.findOne({_id:userId}, { fields: { username: 1, userData: 1 }});
     }
     let hasAdminRole = false;
+    let hasRoleOPINION_CONTROL = false;
     if ( currentUser )
     {
-        currentUser.userData.roles.forEach( role => {
+        /*currentUser.userData.roles.forEach( role => {
             if ( role === 'ADMIN' )
                 hasAdminRole = true;
-        });
+        });*/
+        if ( currentUser.userData.roles.includes( 'ADMIN' ) )
+            hasAdminRole = true;
+        // Spezialrolle für Gutachten Kontrolle beachten.
+        if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+            hasRoleOPINION_CONTROL = true;
     }
 
     return {
@@ -46,7 +52,8 @@ export const useAccount = () => useTracker(() => {
         currentUser,
         isLoggedIn: !!userId,
         accountsReady: user !== undefined && subscription.ready(),
-        hasAdminRole
+        hasAdminRole,
+        hasRoleOPINION_CONTROL
     }
 }, [])
 
@@ -140,20 +147,23 @@ export const useServiceMaintenances = () => useTracker( () => {
  * 
  * @param {String} refOpinion Id of the Opinion
  */
-export const useOpinion = refOpinion => useTracker( () => {
+export const useOpinion = ( refOpinion , hasRoleOPINION_CONTROL = false ) => useTracker( () => {
     const noDataAvailable = [ null /*opinion*/,  true /*loading*/ ];
-
     if (!Meteor.user()) {
         return noDataAvailable;
     }
 
-    const handler = Meteor.subscribe('opinions', refOpinion)
+    let handler;
+    if ( hasRoleOPINION_CONTROL )// Spezialrolle für Gutachten Kontrolle beachten und dann alle Gutachten berücksichtigen, nicht nur die geteilten.
+        handler = Meteor.subscribe('allOpinionsForControl', refOpinion)
+    else
+        handler = Meteor.subscribe('opinions', refOpinion)
+
     if (!handler.ready()) {
         return noDataAvailable;
     }
 
     const opinion = Opinions.findOne(refOpinion);
-
     return [opinion, false];
 }, [refOpinion]);
 
@@ -161,14 +171,18 @@ export const useOpinion = refOpinion => useTracker( () => {
  * Load all Opinions reactively
  * 
  */
-export const useOpinions = () => useTracker( () => {
+export const useOpinions = ( allOpinionsForControl ) => useTracker( () => {
     const noDataAvailable = [ [] /*opinions*/,  true /*loading*/ ];
 
     if (!Meteor.user()) {
         return noDataAvailable;
     }
 
-    const handler = Meteor.subscribe('opinions');
+    let handler;
+    if ( allOpinionsForControl )// Spezialrolle für Gutachten Kontrolle beachten und dann alle Gutachten berücksichtigen, nicht nur die geteilten.
+        handler = Meteor.subscribe('allOpinionsForControl');
+    else
+        handler = Meteor.subscribe('opinions');
     if (!handler.ready()) {
         return noDataAvailable;
     }
@@ -191,8 +205,8 @@ export const useOpinionDetail = (refOpinion, refDetail) => useTracker( () => {
         return noDataAvailable;
     }
     // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
-//    const handler = Meteor.subscribe('opinionDetail', { refOpinion, refDetail });
-const handler = Meteor.subscribe('opinionDetailAsync', { refOpinion, refDetail });
+    // const handler = Meteor.subscribe('opinionDetail', { refOpinion, refDetail });
+    const handler = Meteor.subscribe('opinionDetailAsync', { refOpinion, refDetail });
 
     if (!handler.ready()) {
         return noDataAvailable;
@@ -284,16 +298,18 @@ export const useOpinionDetails = (refOpinion, refParentDetail, callback) => useT
  * @param {String} refOpinion   id of the Opinion
  * @param {String} refDetail    id of the OpinionDetail
  */
-export const useActivities = (refOpinion, refDetail) => useTracker( () => {
+export const useActivities = (refOpinion , refDetail , currentUser) => useTracker( () => {
     const noDataAvailable = [ [] /*activities*/ , true /*loading*/];
-
     if (!Meteor.user()) {
         return noDataAvailable;
     }
+    let hasRoleOPINION_CONTROL = false;
+    if ( currentUser && currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+        hasRoleOPINION_CONTROL = true;// Spezialrolle für Gutachten Kontrolle beachten.
     // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
     //const subscription = Meteor.subscribe('activities', { refOpinion, refDetail });
-    const subscription = Meteor.subscribe('activitiesAsync', { refOpinion, refDetail });
-
+    const subscription = Meteor.subscribe('activitiesAsync', { refOpinion , refDetail , hasRoleOPINION_CONTROL});
+    
     if (!subscription.ready()) {
         return noDataAvailable;
     }

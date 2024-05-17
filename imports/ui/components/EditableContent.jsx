@@ -28,6 +28,8 @@ import { Summernote } from './Summernote';
 import { ActionCodeDropdown } from '../components/ActionCodeDropdown';
 import { actionCodes } from '../../api/constData/actioncodes';
 
+import { ModalKIAgent } from '../modals/KIAgent';
+
 import { AppState, getAppState, setAppState } from '../../client/AppState';
 
 const summernoteOptions = { 
@@ -91,7 +93,7 @@ const MbacTooltip = props => {
     )
 }
 
-const FloatingActions = ({mode, onSave, onCancel, onSocialClick, onCheckAnswer, onRemove, onFinallyRemove, isSpellchecked, isDeleted, isAnswer, likes, dislikes, canEdit = false, canFinallyRemove = false }) => {
+const FloatingActions = ({mode, onSave, onCancel, onSocialClick, onCheckAnswer, onRemove, onFinallyRemove, isSpellchecked, isDeleted, isAnswer, likes, dislikes, value, refOpinion, canEdit = false, canFinallyRemove = false }) => {
     onSave = onSave || function(){};
     onCancel = onCancel || function(){};
     onCheckAnswer = onCheckAnswer || function(){};
@@ -151,6 +153,12 @@ const FloatingActions = ({mode, onSave, onCancel, onSocialClick, onCheckAnswer, 
                     { canEdit ? (isDeleted ? <Tooltip title="Sichtbar schalten"><EyeInvisibleOutlined onClick={onRemove} /></Tooltip> : <Tooltip title="Unsichtbar schalten"><EyeOutlined onClick={onRemove} /></Tooltip>) : null }
                     
                     { canFinallyRemove ? <Tooltip title="LÖSCHEN"><DeleteOutlined onClick={onFinallyRemove} /></Tooltip> : null }
+                    
+                    
+                    { //KI mit anzeigen, wenn Bearbeitungsrechte bestehen - aktuell noch deaktiviert!
+                        (canEdit && false) ? <ModalKIAgent initText = { value } refOpinion = { refOpinion }/> : null
+                    }
+                        
                 </Space>
             </div>
             { mode !== 'FOCUSED' ?
@@ -289,7 +297,6 @@ export class EditableContent extends React.Component {
 
     finallyRemove() {
         const { refDetail } = this.props;
-        
         Modal.confirm({
             title: 'Löschen',
             icon: <ExclamationCircleOutlined />,
@@ -561,13 +568,15 @@ export class EditableContent extends React.Component {
             onCheckAnswer={this.checkAnswer.bind(this)}
             onRemove={this.toggleDeleted.bind(this)}
             onFinallyRemove={this.finallyRemove.bind(this)}
-            onSocialClick={this.doSocial.bind(this)}
+            onSocialClick={this.doSocial.bind(this)}      
             isSpellchecked={!!!item.spellchecked}
             isDeleted={item.deleted}
             isAnswer={item.type == 'ANSWER'}
             likes={item.likes}
             dislikes={item.dislikes}
             //canEdit={elementType !== "Pagebreak" && canEdit}
+            value={value}
+            refOpinion={item.refOpinion}
             canEdit={canEdit}
             canFinallyRemove={canDelete}
         />;
