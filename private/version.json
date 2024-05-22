@@ -1,8 +1,14 @@
 {
-    "version": "2.4.0",
-    "timestamp": "2024-05-15",
+    "version": "2.4.1",
+    "timestamp": "2024-05-22",
     
     "details": [
+        { 
+            "version": "2.4.1", 
+            "description": [
+                "BUGFIX: Bei der Anzeige von Aktivitäten (Veränderungen etc.) stürzt bei Variablen, Teilnehmern etc. die Anwendung nicht mehr ab, sondern die Inhalte werden jetzt korrekt (als JSON) angezeigt."
+            ]
+        },
         { 
             "version": "2.4.0", 
             "description": [

@@ -84,7 +84,6 @@ export const DiffDrawer = ( { refOpinion, opinionDetailId, action, changes } ) =
         return changes.map(item => {
             let { oldValue, newValue } = item;
             let diffType = 'diffWordsWithSpace';
-
             // check for Boolean Type
             if (isBoolean(oldValue)) {
                 oldValue = oldValue ? "Ja" : "Nein";
@@ -114,7 +113,7 @@ export const DiffDrawer = ( { refOpinion, opinionDetailId, action, changes } ) =
             if (isObject(newValue)) {
                 diffType = 'diffJson';
             }
-            
+
             const changeHtmlTags = v => {
                 v = v.replace(/"data:image\/(png|jpg|jpeg);base64[^"]+/g, '"Bild');
                 v = v.replace(/"data:image\/(png|jpg|jpeg);base64[^"]+/g, '"Bild');
@@ -124,9 +123,10 @@ export const DiffDrawer = ( { refOpinion, opinionDetailId, action, changes } ) =
 
                 return v;
             }
-
-            oldValue = changeHtmlTags(oldValue);
-            newValue = changeHtmlTags(newValue);
+            if ( oldValue != '' && diffType != 'diffJson' )
+                oldValue = changeHtmlTags(oldValue);
+            if ( newValue != '' && diffType != 'diffJson' )
+                newValue = changeHtmlTags(newValue);
 
             const diff = Diff[diffType](oldValue, newValue);
             let diffElements = [];
