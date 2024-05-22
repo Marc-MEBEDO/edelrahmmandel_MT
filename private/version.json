@@ -6,7 +6,8 @@
         { 
             "version": "2.4.1", 
             "description": [
-                "BUGFIX: Bei der Anzeige von Aktivitäten (Veränderungen etc.) stürzt bei Variablen, Teilnehmern etc. die Anwendung nicht mehr ab, sondern die Inhalte werden jetzt korrekt (als JSON) angezeigt."
+                "BUGFIX: Bei der Anzeige von Aktivitäten (Veränderungen etc.) stürzt bei Variablen, Teilnehmern etc. die Anwendung nicht mehr ab, sondern die Inhalte werden jetzt korrekt (als JSON) angezeigt.",
+                "Update Opinion-Documenter auf 1.0.54 - Es erfolgt kein Umbruch mehr innerhalb von Fragenblocks."
             ]
         },
         { 
