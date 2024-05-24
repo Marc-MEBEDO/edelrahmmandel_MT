@@ -149,7 +149,7 @@ const FloatingActions = ({mode, onSave, onCancel, onSocialClick, onCheckAnswer, 
                         : <Tooltip title="Rechtschreibmarkierung zurücknehmen"><FileDoneOutlined style={{fontSize:28, color:'#47b147'}} onClick={ e => onSocialClick('spellchecked') } /> </Tooltip>
                     }
 
-                    { canEdit && isAnswer ? <Tooltip title="Als Antwort auswählen. Die Handlungsempfehlung der Antwort wird NICHT in die Frage übertragen, zur Frage sollte eine kurze Zusammenfassung geschrieben werden."><CheckOutlined onClick={onCheckAnswer} /></Tooltip>  : null }
+                    { canEdit && isAnswer ? <Tooltip title="Als Antwort auswählen. Zur Frage sollte eine kurze Zusammenfassung der Handlungsempfehlung geschrieben werden."><CheckOutlined onClick={onCheckAnswer} /></Tooltip>  : null }
                     { canEdit ? (isDeleted ? <Tooltip title="Sichtbar schalten"><EyeInvisibleOutlined onClick={onRemove} /></Tooltip> : <Tooltip title="Unsichtbar schalten"><EyeOutlined onClick={onRemove} /></Tooltip>) : null }
                     
                     { canFinallyRemove ? <Tooltip title="LÖSCHEN"><DeleteOutlined onClick={onFinallyRemove} /></Tooltip> : null }

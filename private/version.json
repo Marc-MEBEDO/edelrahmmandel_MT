@@ -1,13 +1,20 @@
 {
-    "version": "2.4.1",
-    "timestamp": "2024-05-22",
+    "version": "2.4.2",
+    "timestamp": "2024-05-24",
     
     "details": [
+        { 
+            "version": "2.4.2", 
+            "description": [
+                "Tooltip für floating-action Haken (bei Antworten) angepasst zu erfolgten Änderungen in Version 2.3.3",
+                "Update Opinion-Documenter auf 1.0.55 - Änderungen aus Version 1.0.54 rückgängig gemacht."
+            ]
+        },
         { 
             "version": "2.4.1", 
             "description": [
                 "BUGFIX: Bei der Anzeige von Aktivitäten (Veränderungen etc.) stürzt bei Variablen, Teilnehmern etc. die Anwendung nicht mehr ab, sondern die Inhalte werden jetzt korrekt (als JSON) angezeigt.",
-                "Update Opinion-Documenter auf 1.0.54 - Es erfolgt kein Umbruch mehr innerhalb von Fragenblocks."
+                "Update Opinion-Documenter auf 1.0.54 - Es erfolgt kein Umbruch mehr innerhalb von Fragenblöcken."
             ]
         },
         { 
