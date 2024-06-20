@@ -26,11 +26,13 @@ Meteor.publish('opinionDetail', function publishOpinionDetail({ refOpinion, refD
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailAsync', async function publishOpinionDetailAsync({ refOpinion, refDetail }) {
     const currentUser = await Meteor.users.findOneAsync( this.userId );
+    if ( !currentUser )
+        return null;
     let permitted;
-    if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
+    if ( currentUser.userData && currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
         // Spezialrolle für Gutachten Kontrolle beachten.
         permitted = await Opinions.findOneAsync({
-            _id: refOpinion
+             _id: refOpinion
         });
     else
         permitted = await Opinions.findOneAsync({
@@ -67,6 +69,8 @@ Meteor.publish('opinionDetails', function publishOpinionDetails({ refOpinion, re
 // Umstellung auf Async für Meteor Version 2.8, https://guide.meteor.com/2.8-migration
 Meteor.publish('opinionDetailsAsync', async function publishOpinionDetailsAsync({ refOpinion, refParentDetail }) {
     const currentUser = await Meteor.users.findOneAsync( this.userId );
+    if ( !currentUser )
+        return null;
     let permitted;
     if ( currentUser.userData.roles.includes( 'OPINION_CONTROL' ) )
         // Spezialrolle für Gutachten Kontrolle beachten.

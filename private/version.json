@@ -1,8 +1,14 @@
 {
-    "version": "2.4.2",
-    "timestamp": "2024-05-24",
+    "version": "2.4.3",
+    "timestamp": "2024-06-20",
     
     "details": [
+        { 
+            "version": "2.4.3", 
+            "description": [
+                "Update Opinion-Documenter auf 1.0.56"
+            ]
+        },
         { 
             "version": "2.4.2", 
             "description": [
